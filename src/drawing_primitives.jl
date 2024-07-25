@@ -313,7 +313,7 @@ function cached_robj!(robj_func, screen, scene, plot::AbstractPlot)
     return robj
 end
 
-Base.insert!(::RayMakie.Screen, ::Scene, ::Makie.PlotList) = nothing
+Base.insert!(::GLMakie.Screen, ::Scene, ::Makie.PlotList) = nothing
 
 function Base.insert!(screen::Screen, scene::Scene, @nospecialize(x::Plot))
     ShaderAbstractions.switch_context!(screen.glscreen)

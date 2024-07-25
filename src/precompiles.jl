@@ -17,8 +17,8 @@ let
         x = rand(5)
         @compile_workload begin
 
-            RayMakie.activate!()
-            screen = RayMakie.singleton_screen(false)
+            GLMakie.activate!()
+            screen = GLMakie.singleton_screen(false)
             close(screen)
             destroy!(screen)
 
@@ -67,7 +67,7 @@ precompile(glTexImage,
 precompile(glTexImage, (GLenum, Int, GLenum, Int, Int, Int, GLenum, GLenum, Ptr{Vec{2,GLuint}}))
 precompile(glTexImage, (GLenum, Int, GLenum, Int, Int, Int, GLenum, GLenum, Ptr{RGBA{Float16}}))
 precompile(glTexImage, (GLenum, Int, GLenum, Int, Int, Int, GLenum, GLenum, Ptr{N0f8}))
-precompile(setindex!, (RayMakie.GLAbstraction.Texture{Float16,2}, Matrix{Float32}, Rect2{Int32}))
+precompile(setindex!, (GLMakie.GLAbstraction.Texture{Float16,2}, Matrix{Float32}, Rect2{Int32}))
 precompile(getindex, (Makie.Text{Tuple{Vector{Point{2,Float32}}}}, Symbol))
 precompile(getproperty, (Makie.Text{Tuple{Vector{Point{2,Float32}}}}, Symbol))
 precompile(plot!, (Makie.Text{Tuple{Vector{Point{2,Float32}}}},))
