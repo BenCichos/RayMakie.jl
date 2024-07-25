@@ -95,7 +95,7 @@ mutable struct ScreenConfig
             max_light_parameters::Int)
         return new(
             # Renderloop
-            renderloop isa Makie.Automatic ? GLMakie.renderloop : renderloop,
+            renderloop isa Makie.Automatic ? RayMakie.renderloop : renderloop,
             pause_renderloop,
             vsync,
             render_on_demand,
@@ -140,8 +140,8 @@ function activate!(; inline=LAST_INLINE[], screen_config...)
     end
     Makie.inline!(inline)
     LAST_INLINE[] = inline
-    Makie.set_screen_config!(GLMakie, screen_config)
-    Makie.set_active_backend!(GLMakie)
+    Makie.set_screen_config!(RayMakie, screen_config)
+    Makie.set_active_backend!(RayMakie)
     return
 end
 

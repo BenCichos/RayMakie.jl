@@ -5,8 +5,8 @@ using ModernGL
 using Makie
 using FixedPointNumbers
 using ColorTypes
-using ..GLMakie.GLFW
-using ..GLMakie: ShaderSource
+using ..RayMakie.GLFW
+using ..RayMakie: ShaderSource
 using Printf
 using LinearAlgebra
 using Observables

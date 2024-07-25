@@ -1,4 +1,4 @@
-module GLMakie
+module RayMakie
 
 if isdefined(Base, :Experimental) && isdefined(Base.Experimental, Symbol("@max_methods"))
     # GLMakie doesn't do much work, besides assembling shaders.
