@@ -95,7 +95,7 @@ mutable struct ScreenConfig
             max_light_parameters::Int)
         return new(
             # Renderloop
-            renderloop isa Makie.Automatic ? GLMakie.renderloop : renderloop,
+            renderloop isa Makie.Automatic ? RayMakie.renderloop : renderloop,
             pause_renderloop,
             vsync,
             render_on_demand,
@@ -134,16 +134,31 @@ Note that the `screen_config` can also be set permanently via `Makie.set_theme!(
 
 $(Base.doc(ScreenConfig))
 """
+function Makieset_screen_config!(backend::Symbol, new_values)
+    backend_defaults = CURRENT_DEFAULT_THEME[backend]
+    bkeys = keys(backend_defaults)
+    for (k, v) in pairs(new_values)
+        if !(k in bkeys)
+            error("$k is not a valid screen config. Applicable options: $(keys(backend_defaults)). For help, check `?$(backend).ScreenConfig`")
+        end
+        backend_defaults[k] = v
+    end
+    return backend_defaults
+end
+
+
 function activate!(; inline=LAST_INLINE[], screen_config...)
     if haskey(screen_config, :pause_rendering)
         error("pause_rendering got renamed to pause_renderloop.")
     end
     Makie.inline!(inline)
     LAST_INLINE[] = inline
-    Makie.set_screen_config!(GLMakie, screen_config)
-    Makie.set_active_backend!(GLMakie)
+    Makie.set_screen_config!(:GLMakie, screen_config)
+    Makie.set_active_backend!(RayMakie)
     return
 end
+
+
 
 """
     Screen(; screen_config...)
