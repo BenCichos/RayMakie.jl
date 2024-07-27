@@ -134,26 +134,47 @@ Note that the `screen_config` can also be set permanently via `Makie.set_theme!(
 
 $(Base.doc(ScreenConfig))
 """
-function Makieset_screen_config!(backend::Symbol, new_values)
-    backend_defaults = CURRENT_DEFAULT_THEME[backend]
-    bkeys = keys(backend_defaults)
-    for (k, v) in pairs(new_values)
-        if !(k in bkeys)
-            error("$k is not a valid screen config. Applicable options: $(keys(backend_defaults)). For help, check `?$(backend).ScreenConfig`")
-        end
-        backend_defaults[k] = v
-    end
-    return backend_defaults
-end
 
 
 function activate!(; inline=LAST_INLINE[], screen_config...)
+    Makie.CURRENT_DEFAULT_THEME[:RayMakie] = Attributes(
+            # Renderloop
+            renderloop = Makie.automatic,
+            pause_renderloop = false,
+            vsync = false,
+            render_on_demand = true,
+            framerate = 24.0,
+            px_per_unit = Makie.automatic,
+            scalefactor = Makie.automatic,
+
+            # GLFW window attributes
+            float = false,
+            focus_on_show = false,
+            decorated = true,
+            title = "RayMakie",
+            fullscreen = false,
+            debugging = false,
+            monitor = nothing,
+            visible = true,
+
+            # Shader constants & Postproccessor
+            oit = true,
+            fxaa = true,
+            ssao = false,
+            # This adjusts a factor in the rendering shaders for order independent
+            # transparency. This should be the same for all of them (within one rendering
+            # pipeline) otherwise depth "order" will be broken.
+            transparency_weight_scale = 1000f0,
+            # maximum number of lights with shading = :verbose
+            max_lights = 64,
+            max_light_parameters = 5 * 64
+        )
     if haskey(screen_config, :pause_rendering)
         error("pause_rendering got renamed to pause_renderloop.")
     end
     Makie.inline!(inline)
     LAST_INLINE[] = inline
-    Makie.set_screen_config!(:GLMakie, screen_config)
+    Makie.set_screen_config!(RayMakie, screen_config)
     Makie.set_active_backend!(RayMakie)
     return
 end

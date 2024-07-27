@@ -8,7 +8,7 @@ struct SelectionID{T <: Integer}
     index::T
 end
 Base.convert(::Type{SelectionID{T}}, s::SelectionID) where T = SelectionID{T}(T(s.id), T(s.index))
-Base.zero(::Type{GLMakie.SelectionID{T}}) where T = SelectionID{T}(T(0), T(0))
+Base.zero(::Type{RayMakie.SelectionID{T}}) where T = SelectionID{T}(T(0), T(0))
 
 mutable struct GLFramebuffer
     resolution::Observable{NTuple{2, Int}}
