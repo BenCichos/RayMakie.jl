@@ -16,7 +16,7 @@ function (sp::PostprocessPrerender)()
     return
 end
 
-rcpframe(x) = 1f0 ./ Vec2f(x[1], x[2])
+rcpframe(x) = 1.0f0 ./ Vec2f(x[1], x[2])
 
 struct PostProcessor{F}
     robjs::Vector{RenderObject}
@@ -37,7 +37,7 @@ function OIT_postprocessor(framebuffer, shader_cache)
         loadshader("postprocessing/fullscreen.vert"),
         loadshader("postprocessing/OIT_blend.frag")
     )
-    data = Dict{Symbol, Any}(
+    data = Dict{Symbol,Any}(
         # :opaque_color => framebuffer[:color][2],
         :sum_color => framebuffer[:HDR_color][2],
         :prod_alpha => framebuffer[:OIT_weight][2],
@@ -84,7 +84,7 @@ function ssao_postprocessor(framebuffer, shader_cache)
     if !haskey(framebuffer, :position)
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.id[1])
         position_buffer = Texture(
-            Vec3f, size(framebuffer), minfilter = :nearest, x_repeat = :clamp_to_edge
+            Vec3f, size(framebuffer), minfilter=:nearest, x_repeat=:clamp_to_edge
         )
         pos_id = attach_colorbuffer!(framebuffer, :position, position_buffer)
         push!(framebuffer.render_buffer_ids, pos_id)
@@ -93,7 +93,7 @@ function ssao_postprocessor(framebuffer, shader_cache)
         if !haskey(framebuffer, :HDR_color)
             glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.id[1])
             normal_occlusion_buffer = Texture(
-                Vec4{Float16}, size(framebuffer), minfilter = :nearest, x_repeat = :clamp_to_edge
+                Vec4{Float16}, size(framebuffer), minfilter=:nearest, x_repeat=:clamp_to_edge
             )
             normal_occ_id = attach_colorbuffer!(framebuffer, :normal_occlusion, normal_occlusion_buffer)
         else
@@ -117,17 +117,17 @@ function ssao_postprocessor(framebuffer, shader_cache)
         shader_cache,
         loadshader("postprocessing/fullscreen.vert"),
         loadshader("postprocessing/SSAO.frag"),
-        view = Dict(
+        view=Dict(
             "N_samples" => "$N_samples"
         )
     )
-    data1 = Dict{Symbol, Any}(
+    data1 = Dict{Symbol,Any}(
         :position_buffer => framebuffer[:position][2],
         :normal_occlusion_buffer => getfallback(framebuffer, :normal_occlusion, :HDR_color)[2],
         :kernel => kernel,
         :noise => Texture(
             [normalize(Vec2f(2.0rand(2) .- 1.0)) for _ in 1:4, __ in 1:4],
-            minfilter = :nearest, x_repeat = :repeat
+            minfilter=:nearest, x_repeat=:repeat
         ),
         :noise_scale => map(s -> Vec2f(s ./ 4.0), framebuffer.resolution),
         :projection => Observable(Mat4f(I)),
@@ -144,7 +144,7 @@ function ssao_postprocessor(framebuffer, shader_cache)
         loadshader("postprocessing/fullscreen.vert"),
         loadshader("postprocessing/SSAO_blur.frag")
     )
-    data2 = Dict{Symbol, Any}(
+    data2 = Dict{Symbol,Any}(
         :normal_occlusion => getfallback(framebuffer, :normal_occlusion, :HDR_color)[2],
         :color_texture => framebuffer[:color][2],
         :ids => framebuffer[:objectid][2],
@@ -223,7 +223,7 @@ function fxaa_postprocessor(framebuffer, shader_cache)
         loadshader("postprocessing/fullscreen.vert"),
         loadshader("postprocessing/postprocess.frag")
     )
-    data1 = Dict{Symbol, Any}(
+    data1 = Dict{Symbol,Any}(
         :color_texture => framebuffer[:color][2],
         :object_ids => framebuffer[:objectid][2]
     )
@@ -236,7 +236,7 @@ function fxaa_postprocessor(framebuffer, shader_cache)
         loadshader("postprocessing/fullscreen.vert"),
         loadshader("postprocessing/fxaa.frag")
     )
-    data2 = Dict{Symbol, Any}(
+    data2 = Dict{Symbol,Any}(
         :color_texture => getfallback(framebuffer, :color_luma, :HDR_color)[2],
         :RCPFrame => lift(rcpframe, framebuffer.resolution),
     )
@@ -273,14 +273,14 @@ final step for displaying the screen. The argument `screen_fb_id` can be used
 to pass in a reference to the framebuffer ID of the screen. If `nothing` is
 used (the default), 0 is used.
 """
-function to_screen_postprocessor(framebuffer, shader_cache, screen_fb_id = nothing)
+function to_screen_postprocessor(framebuffer, shader_cache, screen_fb_id=nothing)
     # draw color buffer
     shader = LazyShader(
         shader_cache,
         loadshader("postprocessing/fullscreen.vert"),
         loadshader("postprocessing/copy.frag")
     )
-    data = Dict{Symbol, Any}(
+    data = Dict{Symbol,Any}(
         :color_texture => framebuffer[:color][2]
     )
     pass = RenderObject(data, shader, PostprocessPrerender(), nothing)

@@ -16,6 +16,7 @@ using Makie: @get_attribute, to_value, to_colormap, extrema_nan
 using Makie: ClosedInterval, (..)
 using Makie: to_native
 using Makie: spaces, is_data_space, is_pixel_space, is_relative_space, is_clip_space
+using Makie: BudgetedTimer, reset!
 import Makie: to_font, el32convert, Shape, CIRCLE, RECTANGLE, ROUNDED_RECTANGLE, DISTANCEFIELD, TRIANGLE
 import Makie: RelocatableFolders
 
@@ -57,7 +58,7 @@ end
 
 const GL_ASSET_DIR = RelocatableFolders.@path joinpath(@__DIR__, "..", "assets")
 const SHADER_DIR = RelocatableFolders.@path joinpath(GL_ASSET_DIR, "shader")
-const LOADED_SHADERS = Dict{String,Tuple{Float64,ShaderSource}}()
+const LOADED_SHADERS = Dict{String, Tuple{Float64, ShaderSource}}()
 
 function loadshader(name)
     # Turns out, loading shaders is so slow, that it actually makes sense to memoize it :-O
